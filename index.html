@@ -11,7 +11,7 @@
   <meta property="og:image" content="assets/couple.jpg">
   <meta property="og:type" content="website">
 
-  <script>document.documentElement.classList.add('js')</script>
+  <script>document.documentElement.classList.add('js','cover-lock')</script>
 
   <link rel="preload" href="fonts/1FTV-VIP-British-Green.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="preload" href="fonts/DVN-Akela.ttf" as="font" type="font/ttf" crossorigin>
@@ -21,6 +21,18 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <!-- Màn bìa: bấm "Mở thiệp" để mở thiệp và bật nhạc -->
+  <div class="cover" data-cover role="dialog" aria-modal="true" aria-labelledby="cover-names">
+    <div class="cover__inner">
+      <img class="cover__mono" src="assets/monogram.png" width="118" height="142" alt="">
+      <p class="cover__kicker">Thiệp mời cưới</p>
+      <h2 class="cover__names" id="cover-names">Đỗ Quân <span class="cover__amp">&amp;</span> Minh Ngọc</h2>
+      <p class="cover__date">Thứ 3 · 24.11.2026</p>
+      <p class="cover__guest" data-guest hidden>Trân trọng kính mời<br><strong data-guest-name></strong></p>
+      <button class="button cover__open" type="button" data-cover-open>Mở thiệp</button>
+    </div>
+  </div>
+
   <div class="backdrop" aria-hidden="true"></div>
 
   <main class="card">
@@ -260,6 +272,7 @@
   </dialog>
 
   <script src="js/config.js"></script>
+  <script src="js/cover.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
   <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js" defer></script>

@@ -1,6 +1,6 @@
 // Nhạc nền: phát từ file mp3 (MUSIC_FILE) nếu có, không thì từ YouTube (MUSIC_YOUTUBE_ID).
-// Trình duyệt không cho tự phát nhạc có tiếng khi chưa có thao tác, nên nhạc bắt đầu ở lần
-// chạm/cuộn/bấm đầu tiên của khách, hoặc khi bấm nút đĩa nhạc.
+// Trình duyệt không cho tự phát nhạc có tiếng khi chưa có thao tác, nên nhạc bắt đầu khi khách
+// bấm "Mở thiệp" trên màn bìa (hoặc lần chạm đầu tiên nếu không có bìa). Nhạc lặp lại khi hết bài.
 (function () {
   'use strict';
 
@@ -41,7 +41,7 @@
   btn.addEventListener('click', function (e) {
     e.stopPropagation();
     hideHint();
-    if (playing || wantPlay) {
+    if (playing) {
       pause();
       try { localStorage.setItem(PREF_KEY, '1'); } catch (err) {}
     } else {
@@ -50,17 +50,23 @@
     }
   });
 
-  // First interaction anywhere starts the music (unless the guest turned it off before)
-  var started = false;
-  function firstInteraction(e) {
-    if (started) return;
+  // "Mở thiệp" on the cover is the guest's first tap: start the music right there.
+  document.addEventListener('invite:open', function () {
+    hideHint();
+    if (!userTurnedOff) play();
+  });
+
+  // Fallback (no cover, or the browser refused): any later tap/click/key starts it.
+  // Only these events count as a user gesture for audio on phones (not touchstart/pointerdown).
+  var GESTURES = ['click', 'touchend', 'keydown'];
+  function onGesture(e) {
+    if (playing) return stopListening();
     if (e && e.target && e.target.closest && e.target.closest('[data-music]')) return;
-    started = true;
-    ['pointerdown', 'keydown', 'touchstart'].forEach(function (t) { window.removeEventListener(t, firstInteraction, true); });
     hideHint();
     if (!userTurnedOff) play();
   }
-  ['pointerdown', 'keydown', 'touchstart'].forEach(function (t) { window.addEventListener(t, firstInteraction, true); });
+  function stopListening() { GESTURES.forEach(function (t) { window.removeEventListener(t, onGesture, true); }); }
+  GESTURES.forEach(function (t) { window.addEventListener(t, onGesture, true); });
 
   // Pause while the tab is in the background, resume when the guest comes back
   var resumeOnShow = false;
@@ -84,11 +90,13 @@
     if (cfg.MUSIC_START) {
       audio.addEventListener('loadedmetadata', function () { audio.currentTime = cfg.MUSIC_START; }, { once: true });
     }
+    // loop = true: hết bài tự phát lại từ đầu
+    audio.addEventListener('playing', function () { playing = true; render(); stopListening(); });
     audio.addEventListener('play', function () { playing = true; render(); });
     audio.addEventListener('pause', function () { playing = false; render(); });
     audio.addEventListener('error', function () { fail('file ' + cfg.MUSIC_FILE); });
     player = {
-      play: function () { var p = audio.play(); if (p && p.catch) p.catch(function () { wantPlay = false; render(); }); },
+      play: function () { var p = audio.play(); if (p && p.catch) p.catch(function () { playing = false; render(); }); },
       pause: function () { audio.pause(); },
     };
     ready = true;
@@ -128,6 +136,7 @@
         },
         onStateChange: function (e) {
           playing = e.data === YT.PlayerState.PLAYING || e.data === YT.PlayerState.BUFFERING;
+          if (playing) stopListening();
           render();
         },
         onError: function (e) {

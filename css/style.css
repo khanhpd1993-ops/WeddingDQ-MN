@@ -738,3 +738,73 @@ button { cursor: pointer; }
   opacity: 0;
   pointer-events: none;
 }
+
+/* ===== Màn bìa "Mở thiệp" ===== */
+.cover { display: none; }
+html.js .cover {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px var(--gutter);
+  background: var(--ground-sage);
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 1100ms var(--ease-in-out);
+}
+html.cover-lock, html.cover-lock body { overflow: hidden; }
+.cover__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+  transition: opacity 400ms var(--ease-out), transform 500ms var(--ease-out);
+}
+.cover__mono { width: 104px; height: auto; margin-bottom: 8px; }
+.cover__kicker {
+  font-family: var(--f-display);
+  font-size: 20px;
+  color: var(--ink-soft);
+}
+.cover__names {
+  font-family: var(--f-names);
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 1.15;
+  color: var(--olive);
+}
+.cover__amp { display: block; font-size: 28px; }
+.cover__date {
+  font-family: var(--f-display);
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+}
+.cover__guest {
+  margin-top: 6px;
+  font-weight: 300;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+.cover__guest strong { font-family: var(--f-display); font-weight: 400; font-size: 24px; color: var(--ink); }
+.cover__open { margin-top: 18px; min-width: 168px; }
+
+.cover.is-opening { clip-path: inset(0 0 100% 0); pointer-events: none; }
+.cover.is-opening .cover__inner { opacity: 0; transform: translateY(-16px); }
+
+@media (prefers-reduced-motion: no-preference) {
+  html.js .cover__inner > * { animation: cover-in 900ms var(--ease-expo) both; }
+  html.js .cover__inner > :nth-child(2) { animation-delay: 80ms; }
+  html.js .cover__inner > :nth-child(3) { animation-delay: 160ms; }
+  html.js .cover__inner > :nth-child(4) { animation-delay: 240ms; }
+  html.js .cover__inner > :nth-child(5) { animation-delay: 300ms; }
+  html.js .cover__inner > :nth-child(6) { animation-delay: 360ms; }
+  .cover__open { animation-name: cover-in, cover-pulse !important; animation-duration: 900ms, 2.4s !important; animation-delay: 360ms, 1.6s !important; animation-iteration-count: 1, infinite !important; }
+}
+@keyframes cover-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes cover-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(131, 136, 103, 0.45); } 60% { box-shadow: 0 0 0 14px rgba(131, 136, 103, 0); } }
+/* The music hint is not needed while the cover asks for the tap */
+html.cover-lock .music__hint { display: none; }

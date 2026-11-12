@@ -142,6 +142,7 @@
   if (window.Lenis) {
     var lenis = new Lenis({ lerp: 0.12, smoothWheel: true });
     window.__lenis = lenis;
+    if (document.documentElement.classList.contains('cover-lock')) lenis.stop();
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add(function (t) { lenis.raf(t * 1000); });
     gsap.ticker.lagSmoothing(0);
@@ -156,15 +157,23 @@
   gsap.set('[data-hero-photo] img', { scale: 1.18 });
   ready();
 
-  var intro = gsap.timeline({ defaults: { ease: EXPO } });
-  intro
-    .to('.hero__title', { opacity: 1, y: 0, duration: 0.9 }, 0)
-    .to('[data-hero-photo]', { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.3, ease: 'expo.inOut' }, 0.1)
-    .to('[data-hero-photo] img', { scale: 1.06, duration: 1.8 }, 0.1)
-    .to('[data-hero-line]', { yPercent: 0, duration: 1.0, stagger: 0.09 }, 0.75)
-    .to('.hero__tagline', { opacity: 1, y: 0, duration: 0.8 }, 0.95)
-    .to('[data-hero-divider]', { scaleY: 1, duration: 0.8, stagger: 0.06 }, 1.05)
-    .to('.hero__date [data-hero]', { opacity: 1, y: 0, duration: 0.8, stagger: 0.07 }, 1.05);
+  function playIntro() {
+    var intro = gsap.timeline({ defaults: { ease: EXPO } });
+    intro
+      .to('.hero__title', { opacity: 1, y: 0, duration: 0.9 }, 0)
+      .to('[data-hero-photo]', { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.3, ease: 'expo.inOut' }, 0.1)
+      .to('[data-hero-photo] img', { scale: 1.06, duration: 1.8 }, 0.1)
+      .to('[data-hero-line]', { yPercent: 0, duration: 1.0, stagger: 0.09 }, 0.75)
+      .to('.hero__tagline', { opacity: 1, y: 0, duration: 0.8 }, 0.95)
+      .to('[data-hero-divider]', { scaleY: 1, duration: 0.8, stagger: 0.06 }, 1.05)
+      .to('.hero__date [data-hero]', { opacity: 1, y: 0, duration: 0.8, stagger: 0.07 }, 1.05);
+  }
+  // Wait for "Mở thiệp" on the cover, so the intro plays where the guest can see it
+  if (document.querySelector('[data-cover]') && !window.__inviteOpened) {
+    document.addEventListener('invite:open', function () { setTimeout(playIntro, 450); }, { once: true });
+  } else {
+    playIntro();
+  }
 
   // Slow drift on the couple photo while the hero scrolls away (one moving picture)
   gsap.to('[data-hero-photo] img', {
