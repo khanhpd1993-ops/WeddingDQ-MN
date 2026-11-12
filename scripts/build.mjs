@@ -16,6 +16,9 @@ const DEFAULTS = {
   APPS_SCRIPT_URL: '',
   WEDDING_TIME: '2026-11-24T17:00:00+07:00',
   MAP_QUERY: 'Trung tâm tiệc cưới CTM Palace, 131 Nguyễn Phong Sắc, Nghĩa Đô, Cầu Giấy, Hà Nội',
+  MUSIC_FILE: 'assets/music.m4a',
+  MUSIC_YOUTUBE_ID: 'AWKUF7xhuIw',
+  MUSIC_START: '0',
 };
 
 function readDotEnv(file) {
@@ -48,11 +51,22 @@ const config = {
   APPS_SCRIPT_URL: pick('APPS_SCRIPT_URL'),
   WEDDING_TIME: pick('WEDDING_TIME'),
   MAP_QUERY: pick('MAP_QUERY'),
+  MUSIC_FILE: pick('MUSIC_FILE'),
+  MUSIC_YOUTUBE_ID: pick('MUSIC_YOUTUBE_ID'),
+  MUSIC_START: Number(pick('MUSIC_START')) || 0,
 };
 
 // Kiểm tra nhanh để tránh deploy cấu hình sai
 if (config.APPS_SCRIPT_URL && !/^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec$/.test(config.APPS_SCRIPT_URL)) {
   console.error('✗ APPS_SCRIPT_URL không đúng dạng https://script.google.com/macros/s/…/exec');
+  process.exit(1);
+}
+if (config.MUSIC_YOUTUBE_ID && !/^[\w-]{11}$/.test(config.MUSIC_YOUTUBE_ID)) {
+  console.error('✗ MUSIC_YOUTUBE_ID phải là mã video 11 ký tự (phần sau watch?v= trong link YouTube)');
+  process.exit(1);
+}
+if (config.MUSIC_FILE && !existsSync(join(root, config.MUSIC_FILE))) {
+  console.error('✗ Không tìm thấy file nhạc ' + config.MUSIC_FILE);
   process.exit(1);
 }
 if (Number.isNaN(Date.parse(config.WEDDING_TIME))) {

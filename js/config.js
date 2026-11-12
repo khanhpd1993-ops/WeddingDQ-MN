@@ -2,5 +2,8 @@
 window.WEDDING = {
   "APPS_SCRIPT_URL": "",
   "WEDDING_TIME": "2026-11-24T17:00:00+07:00",
-  "MAP_QUERY": "Trung tâm tiệc cưới CTM Palace, 131 Nguyễn Phong Sắc, Nghĩa Đô, Cầu Giấy, Hà Nội"
+  "MAP_QUERY": "Trung tâm tiệc cưới CTM Palace, 131 Nguyễn Phong Sắc, Nghĩa Đô, Cầu Giấy, Hà Nội",
+  "MUSIC_FILE": "assets/music.m4a",
+  "MUSIC_YOUTUBE_ID": "AWKUF7xhuIw",
+  "MUSIC_START": 0
 };

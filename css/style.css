@@ -674,3 +674,67 @@ button { cursor: pointer; }
   transform-origin: 50% 0;
 }
 .timeline--right .timeline__line { left: auto; right: 4px; top: 5px; bottom: 8px; }
+
+/* ===== Nhạc nền ===== */
+.music {
+  position: fixed;
+  z-index: 50;
+  right: max(16px, calc((100vw - var(--card-w)) / 2 + 16px));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none;
+}
+.music__hint {
+  padding: 8px 12px;
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-family: var(--f-ui);
+  font-size: 13px;
+  box-shadow: 0 6px 20px rgba(35, 28, 20, 0.12);
+  transition: opacity 400ms var(--ease-out), transform 400ms var(--ease-out);
+}
+.music__hint.is-hidden { opacity: 0; transform: translateX(8px); }
+.music__btn {
+  pointer-events: auto;
+  position: relative;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--olive);
+  color: var(--paper);
+  box-shadow: 0 6px 20px rgba(35, 28, 20, 0.18);
+  transition: transform var(--t-press) var(--ease-out), background-color var(--t-hover) ease;
+}
+.music__btn:hover { background: var(--olive-dark); }
+.music__btn:active { transform: scale(0.92); }
+.music__btn > * { grid-area: 1 / 1; }
+.music__disc { animation: disc-spin 6s linear infinite; animation-play-state: paused; }
+.music__btn.is-playing .music__disc { animation-play-state: running; }
+.music__off {
+  width: 26px;
+  height: 1.5px;
+  background: currentColor;
+  transform: rotate(-45deg);
+  transition: opacity var(--t-ui) ease;
+}
+.music__btn.is-playing .music__off { opacity: 0; }
+@keyframes disc-spin { to { transform: rotate(360deg); } }
+.music__btn[hidden] + *, .music:has(.music__btn[hidden]) .music__hint { display: none; }
+
+/* YouTube player: kept in the page but out of the way */
+.music__yt {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
