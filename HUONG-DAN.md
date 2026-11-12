@@ -86,7 +86,7 @@ MAP_QUERY=Trung tâm tiệc cưới CTM Palace, 131 Nguyễn Phong Sắc, …
 ## Nhạc nền và link riêng cho từng khách
 
 - Mở link thì khách thấy màn bìa **"Mở thiệp"**. Bấm vào là thiệp mở ra và nhạc phát luôn. Trình duyệt (nhất là iPhone/Zalo) chặn tự phát nhạc nếu khách chưa chạm vào trang, nên màn bìa là cách duy nhất để nhạc lên ngay từ đầu.
-- Nhạc tự **phát lại** khi hết bài. Khách tắt bằng nút đĩa nhạc ở góc phải; lần sau mở lại vẫn giữ trạng thái tắt.
+- Nhạc tự **phát lại** khi hết bài. Nút đĩa nhạc ở góc phải luôn ở trạng thái bật khi vào thiệp; khách bấm vào để tắt/bật.
 - Đổi bài: thay `assets/music.m4a` (hoặc sửa `MUSIC_FILE` trong `.env`). `MUSIC_START` là giây bắt đầu phát.
 - **Link riêng**: thêm `?to=Tên khách` vào cuối link, ví dụ `https://…vercel.app/?to=Anh Tuấn`. Màn bìa sẽ ghi "Trân trọng kính mời Anh Tuấn" và ô họ tên trong form được điền sẵn.
 

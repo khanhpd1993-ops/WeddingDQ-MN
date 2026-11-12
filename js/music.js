@@ -9,29 +9,31 @@
   var hint = document.querySelector('[data-music-hint]');
   if (!btn || (!cfg.MUSIC_FILE && !cfg.MUSIC_YOUTUBE_ID)) return;
 
-  var PREF_KEY = 'thiep-cuoi-music-off';
-  var userTurnedOff = false;
-  try { userTurnedOff = localStorage.getItem(PREF_KEY) === '1'; } catch (e) {}
+  // Nhạc luôn bật khi vào thiệp (xoá lựa chọn "tắt" cũ còn lưu từ bản trước)
+  try { localStorage.removeItem('thiep-cuoi-music-off'); } catch (e) {}
 
   var playing = false;
-  var wantPlay = false;
+  var wantPlay = true; // nút hiện trạng thái bật ngay từ đầu
   var ready = false;
   var player = null; // { play(), pause() }
 
   function render() {
-    btn.classList.toggle('is-playing', playing);
-    btn.setAttribute('aria-pressed', playing ? 'true' : 'false');
-    btn.setAttribute('aria-label', playing ? 'Tắt nhạc' : 'Bật nhạc');
+    var on = playing || wantPlay;
+    btn.classList.toggle('is-playing', on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.setAttribute('aria-label', on ? 'Tắt nhạc' : 'Bật nhạc');
   }
 
   function hideHint() { if (hint) hint.classList.add('is-hidden'); }
 
   function play() {
     wantPlay = true;
+    render();
     if (ready && player) player.play();
   }
   function pause() {
     wantPlay = false;
+    render();
     if (ready && player) player.pause();
   }
 
@@ -41,19 +43,14 @@
   btn.addEventListener('click', function (e) {
     e.stopPropagation();
     hideHint();
-    if (playing) {
-      pause();
-      try { localStorage.setItem(PREF_KEY, '1'); } catch (err) {}
-    } else {
-      play();
-      try { localStorage.removeItem(PREF_KEY); } catch (err) {}
-    }
+    if (playing || wantPlay) pause();
+    else play();
   });
 
   // "Mở thiệp" on the cover is the guest's first tap: start the music right there.
   document.addEventListener('invite:open', function () {
     hideHint();
-    if (!userTurnedOff) play();
+    if (wantPlay) play();
   });
 
   // Fallback (no cover, or the browser refused): any later tap/click/key starts it.
@@ -63,7 +60,7 @@
     if (playing) return stopListening();
     if (e && e.target && e.target.closest && e.target.closest('[data-music]')) return;
     hideHint();
-    if (!userTurnedOff) play();
+    if (wantPlay) play();
   }
   function stopListening() { GESTURES.forEach(function (t) { window.removeEventListener(t, onGesture, true); }); }
   GESTURES.forEach(function (t) { window.addEventListener(t, onGesture, true); });
@@ -72,7 +69,7 @@
   var resumeOnShow = false;
   document.addEventListener('visibilitychange', function () {
     if (!ready || !player) return;
-    if (document.hidden) { resumeOnShow = wantPlay; if (wantPlay) player.pause(); }
+    if (document.hidden) { resumeOnShow = wantPlay && playing; if (resumeOnShow) player.pause(); }
     else if (resumeOnShow) { player.play(); }
   });
 
