@@ -1,0 +1,3 @@
+# File được upload khi chạy `npx vercel`. .env được giữ lại để bước build đọc cấu hình.
+dist
+.DS_Store

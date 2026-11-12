@@ -36,7 +36,7 @@ Mở http://localhost:3000. Lúc này form chưa gửi được vì chưa kết 
    - *Thực thi với tư cách*: **Tôi**.
    - *Người có quyền truy cập*: **Bất kỳ ai**. Phải chọn đúng, nếu không khách sẽ không gửi được.
    - Bấm **Triển khai** → copy **URL ứng dụng web** (dạng `https://script.google.com/macros/s/…/exec`).
-6. Mở `js/config.js`, dán URL vào:
+6. Mở `.env`, dán URL vào dòng `APPS_SCRIPT_URL=` rồi chạy `node scripts/build.mjs --config`:
    ```js
    APPS_SCRIPT_URL: 'https://script.google.com/macros/s/…/exec',
    ```
@@ -68,12 +68,27 @@ Lần đầu, Vercel yêu cầu đăng nhập (bằng GitHub/Google/email) và h
 
 Muốn link đẹp hơn, vào *Project → Settings → Domains* để đổi tên `xxx.vercel.app` hoặc gắn tên miền riêng.
 
+## Cấu hình bằng `.env`
+
+Cấu hình nằm trong file `.env`. File này không bị đẩy lên GitHub, và có mẫu sẵn là `.env.example`:
+
+```
+APPS_SCRIPT_URL=https://script.google.com/macros/s/…/exec
+WEDDING_TIME=2026-11-24T17:00:00+07:00
+MAP_QUERY=Trung tâm tiệc cưới CTM Palace, 131 Nguyễn Phong Sắc, …
+```
+
+- **Xem thử trên máy:** sửa `.env` rồi chạy `node scripts/build.mjs --config` để cập nhật `js/config.js`.
+- **Deploy bằng `npx vercel --prod`:** Vercel tự chạy `scripts/build.mjs` và đọc `.env` của bạn.
+- **Deploy qua GitHub:** `.env` không có trên GitHub, nên phải vào Vercel → *Project → Settings → Environment Variables*, thêm `APPS_SCRIPT_URL` (và hai biến kia nếu muốn đổi), rồi **Redeploy**.
+- Các giá trị này đều hiện trong trình duyệt của khách, nên **không** để mật khẩu hay token trong `.env`.
+
 ## Sửa nội dung thường gặp
 
 | Muốn sửa | Ở đâu |
 |---|---|
-| Giờ đếm ngược | `js/config.js` → `WEDDING_TIME` |
-| Địa điểm bản đồ | `js/config.js` → `MAP_QUERY` |
+| Giờ đếm ngược | `.env` → `WEDDING_TIME` |
+| Địa điểm bản đồ | `.env` → `MAP_QUERY` |
 | Tên, ngày, địa chỉ, lịch trình | `index.html` (tìm theo chữ) |
 | Ảnh album | thay file trong `assets/` (giữ nguyên tên), ảnh dọc tỉ lệ 2:3 |
 | Ảnh khi share link (Zalo/Facebook) | `index.html` → `og:image`. Sau khi deploy, nên đổi thành link đầy đủ `https://…vercel.app/assets/couple.jpg` |

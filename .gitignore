@@ -1,0 +1,11 @@
+# Cấu hình riêng
+.env
+.env.*
+!.env.example
+
+# Vercel / build
+.vercel
+dist
+
+# macOS
+.DS_Store
